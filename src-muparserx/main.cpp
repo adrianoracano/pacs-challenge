@@ -1,10 +1,5 @@
 #include <iostream>
 #include <fstream>
-/* #include <algorithm>
-#include <vector>
-#include <functional>
-#include <algorithm>
-#include <cmath> */
 #include "Optimization.hpp"
 #include "muParserXInterface.hpp"
 #include "json.hpp"
@@ -87,7 +82,7 @@ int main() {
     //set the "h" parameter, the increment value. 
 
     const int finite_diff = data.value("use_finite_diff", 0);
-    if( !finite_diff ){
+    if( finite_diff == 0 ){
         std::array<std::string, N> grad_expr = data["grad_f"].get<std::array<std::string, N>>();
         std::array<muParserXInterface<N>, N> grad_f;
         for (int i = 0 ; i < N ; ++i)
@@ -125,14 +120,14 @@ int main() {
 
 
     //Perform optimization
-    auto result = gradient_method<S, M>(params);
+    auto result = gradient_method<S, M, N>(params);
 
     // Output result
-    std::cout << "Minimum found at: ";
+    std::cout << "Minimum found at x = [ ";
     for (double val : result) {
         std::cout << val << " ";
     }
-    std::cout << std::endl;
+    std::cout << "]" << std::endl;
     std::cout << "The value of f is " << f(result) << std::endl;
     
     return 0;

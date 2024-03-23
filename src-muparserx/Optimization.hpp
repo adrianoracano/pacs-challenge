@@ -59,11 +59,11 @@ double armijo_rule(const std::array<double, N>& x_k, const std::function<double(
 
     //computing : alpha * grad(x_k)
     auto& vec = grad_f(x_k);
-    for(int i = 0 ; i < vec.size() ; ++i)
+    for(int i = 0 ; i < N ; ++i)
         vec[i] *= alpha;
 
     //computing : x_k - alpha*grad(x_k)
-    for(int i = 0 ; i < vec.size() ; ++i){
+    for(int i = 0 ; i < N ; ++i){
         vec[i] *= -1;
         vec[i] += x_k[i];
     }
