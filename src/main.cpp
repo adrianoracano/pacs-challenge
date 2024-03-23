@@ -1,16 +1,27 @@
 #include <iostream>
-#include <algorithm>
-#include <vector>
-#include <functional>
-#include <algorithm>
-#include <cmath>
 #include "Optimization.hpp"
-#include <fstream>
 
-//Constant parameters to set at the beginning
-constexpr OptimizationMethod M = OptimizationMethod::ADAM; //optimization method
-constexpr StepSizeStrategy S = StepSizeStrategy::ApproximateLineSearch; //stepsize strategy for the update of alpha
-//////////////////////
+//===================================== CONSTANT PARAMETERS =======================================
+constexpr OptimizationMethod M = OptimizationMethod::ADAM; 
+//Optimization method, possible choices:
+// - Gradient
+// - NesterovIteration
+// - HeavyBall
+// - ADAM
+
+constexpr StepSizeStrategy S = StepSizeStrategy::ExponentialDecay; 
+//Step-size strategy, available choices (working if M != ADAM):
+// - ExponentialDecay
+// - InverseDecay
+// - ApproximateLineSearch (working only if M == Gradient)
+
+/* Stepsize strategy for the update of alpha: this choice has no effect on the ADAM algorithm that 
+uses a constant step size : params.alpha.
+Moreover, the choice of the ApproximateLineSearch strategy (Armijo rule) is possible only for the
+standard gradient method, which means that if NesterovIteration or HeavyBall are chosen as templa-
+-te parameter, the program will use by default the InverseDecay strategy to update alpha_k.
+ */
+
 
 // Centered finite-differences gradient of the test function
 auto const numeric_grad = [](const std::function<double(const std::vector<double> &)> f,  double const& h){
@@ -38,11 +49,13 @@ std::vector<double> grad_test_function(const std::vector<double>& x) {
 }
 
 int main() {
-    // Define optimization parameters
+
+    //Parameters struct
     OptimizationParams params;
+
     params.f = test_function;
-    //params.grad_f = grad_test_function;
-    params.grad_f = numeric_grad(test_function, 1e-4);
+    params.grad_f = grad_test_function;
+    //params.grad_f = numeric_grad(test_function, 1e-4); //uncomment to use the finite-differences version
     params.initial_guess = {0.0, 0.0};
     params.alpha_0 = 0.1;
     params.mu = 0.2;
@@ -50,9 +63,10 @@ int main() {
     params.epsilon_r = 1e-6;
     params.epsilon_s = 1e-6;
     params.max_iterations = 1000;
-    //Nesterov and HeavyBall
+
+    //Nesterov iteration and HeavyBall parameters
     params.eta = 0.9;
-    //ADAM
+    //ADAM parameters
     params.alpha = 0.01;
     params.beta1 = 0.9;
     params.beta2 = 0.999;
