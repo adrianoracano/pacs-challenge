@@ -4,3 +4,5 @@ Consequently, to manage vectorial quantities std::array<double, N> has been used
 Moreover it is possible to modify the other parameters by editing the data.json file. 
 The function variables must expressed as "x[0], x[1], ...".
 The grad_f expression in "data.json" has to be in the format ["df/dx", "df/dy", ...], with a number of arguments equal to "N". Same for the "initial_guess" parameter.
+
+To run the program it is necessary to modify the CPPFLAGS variable in the makefile, by putting the local muparserx and json directories . Then it is sufficient to type `make` and `./main`. 
