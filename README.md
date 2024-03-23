@@ -15,10 +15,3 @@ The user can choose among 4 different methods :
 - ADAM
 
 For the first three the step size can be adjusted by the inverse or exponential decay method (for the gradient method, the Armijo rule can also be chosen). 
-
-These steps are repeated until a stopping criterion is met, such as reaching a maximum number of iterations or convergence of the optimization process.
-
-### Usage
-- The Adam optimization algorithm is widely used in training deep learning models.
-- It offers efficient convergence properties and adaptive learning rates for each parameter.
-- It is suitable for both convex and non-convex optimization problems.
