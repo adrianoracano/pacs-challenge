@@ -30,7 +30,9 @@ struct OptimizationParams
 {
     std::function<double(const std::vector<double> &)> f;                   // Objective function
     std::function<std::vector<double>(const std::vector<double> &)> grad_f; // Gradient of the objective function
-    std::vector<double> initial_guess;                                      // Initial guess for optimization
+    std::vector<double> initial_guess;   // Initial guess for optimization
+    //@note if you initialize in-class you have also the defaults automatically                                   
+    // for isntance double alpha_0=1.0;
     double alpha_0;                                                         // Initial step size
     double mu;                                                              // Decay parameter for step size
     double sigma;                                                           // Parameter for Armijo rule
@@ -51,6 +53,9 @@ double armijo_rule(const std::vector<double>& x_k, const std::function<double(co
                    const std::function<std::vector<double>(const std::vector<double>&)>& grad_f,
                    double alpha, double sigma) {
     double grad_norm = norm(grad_f(x_k));
+    //@note set a maximumn number of iterations to avoid infinite loop
+    // Armijio shoudl always converge if f is continuous and df has a Lipschitz continuity
+    // but you never know if numerical errors can make it fail
     while (f(x_k) - f(x_k - alpha * grad_f(x_k)) < sigma * alpha * grad_norm * grad_norm) {
         alpha /= 2.0; // Reduce alpha
     }
@@ -69,6 +74,7 @@ std::vector<double> gradient_method(const OptimizationParams& params) {
             std::vector<double> grad = params.grad_f(x_k);
             
             // Update step size based on strategy
+            //@note Nice
             if constexpr (S == StepSizeStrategy::ExponentialDecay) {
                 alpha_k = params.alpha_0 * std::exp(-params.mu * iter);
             } else if  constexpr (S == StepSizeStrategy::InverseDecay) {
@@ -81,6 +87,8 @@ std::vector<double> gradient_method(const OptimizationParams& params) {
             x_k = x_k - alpha_k * grad;
             
             // Check termination conditions
+            //@note you could have avoided the brak by setting properly the
+            // while loop conditions, instead of using just "true" 
             if (norm(alpha_k * grad) < params.epsilon_s \
             || \
             std::abs(params.f(x_k) - params.f(x_k - alpha_k * grad)) < params.epsilon_r \
@@ -156,6 +164,8 @@ std::vector<double> gradient_method(const OptimizationParams& params) {
         std::vector<double> m(x_k.size(), 0.0); // First moment estimate
         std::vector<double> v(x_k.size(), 0.0); // Second moment estimate
 
+        //@note also here you could have avoided the break by setting properly the
+        // while loop conditions, instead of using just "true"
         while (true) {
             iter++;
             std::vector<double> grad = params.grad_f(x_k);
