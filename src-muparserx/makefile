@@ -1,12 +1,15 @@
 CXX      ?= g++
 CXXFLAGS ?= -std=c++20
 CPPFLAGS ?= -O3 -Wall -I. -Wno-conversion-null -Wno-deprecated-declarations 
-CPPFLAGS += -I../../pacs-examples/Examples/include/muparserx #muparserx path
+# It is better to use a macro, so you can set is as an environmental variable
+# set in the .bashrc (or .bash_profile) file
+ROOT=$(PACS_ROOT)
+CPPFLAGS += -I$(ROOT)/include/muparserx #muparserx path
 #CPPFLAGS += -I../../pacs-examples/Extras/muparserx/parser 
-CPPFLAGS += -I../../pacs-examples/Examples/include #json path
+CPPFLAGS += -I$(ROOT)/include #json path
 
 EXEC     = main
-LDFLAGS ?= -L../../pacs-examples/Examples/lib -L../../pacs-examples/Examples/lib64 #muparserx library paths
+LDFLAGS ?= -L$(ROOT)/lib -L$(ROOT)/lib64 #muparserx library paths
 LIBS  ?= -lmuparserx
 
 all: $(EXEC)
