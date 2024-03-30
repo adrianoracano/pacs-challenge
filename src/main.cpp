@@ -2,6 +2,7 @@
 #include "Optimization.hpp"
 
 //===================================== CONSTANT PARAMETERS =======================================
+//@note Fine the use of enumerators
 constexpr OptimizationMethod M = OptimizationMethod::ADAM; 
 //Optimization method, possible choices:
 // - Gradient
@@ -22,11 +23,14 @@ standard gradient method, which means that if NesterovIteration or HeavyBall are
 -te parameter, the program will use by default the InverseDecay strategy to update alpha_k.
  */
 
-
+//@note You could have put this in a separate file, since it is a common utility function
+// that you may want to use also eslewhere
 // Centered finite-differences gradient of the test function
 auto const numeric_grad = [](const std::function<double(const std::vector<double> &)> f,  double const& h){
     return [f, h](std::vector<double> x){
         std::vector<double> result;
+        //@note if you use push_back reserve the vector. More efficient
+        // result.reserve(x.size());
         for(size_t i = 0 ; i < x.size() ; ++i){
             auto x_plus = x;
             auto x_minus = x;
@@ -56,6 +60,8 @@ int main() {
     params.f = test_function;
     params.grad_f = grad_test_function;
     //params.grad_f = numeric_grad(test_function, 1e-4); //uncomment to use the finite-differences version
+    //@note it would be better read this parameter from a file.
+    
     params.initial_guess = {0.0, 0.0};
     params.alpha_0 = 0.1;
     params.mu = 0.2;
